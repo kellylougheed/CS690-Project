@@ -90,19 +90,35 @@ class Program {
 
         // TODO: READ IN FILE AS DICTIONARY OF TYPE DATETIME:LIST OF STRINGS
 
+        string filePath = "gratitude-journal.txt";
+
         Dictionary<DateTime, List<string>> journal = new Dictionary<DateTime, List<string>>();
-        journal.Add(DateTime.Today.Date, new List<string> { "Thing 1", "Thing 2" });
+
+        string contents = File.ReadAllText(filePath);
+        string[] entries = contents.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string entry in entries) {
+            string[] dateAndList = entry.Split("||", StringSplitOptions.RemoveEmptyEntries);
+
+            string dtString = dateAndList[0];
+
+            string[] listItems = dateAndList[1].Split("|", StringSplitOptions.RemoveEmptyEntries);
+
+            // Final date form
+            DateTime parsedDate = DateTime.Parse(dtString).Date;
+
+            journal.Add(parsedDate, listItems.ToList());
+
+        }
         
         // testing
         foreach (KeyValuePair<DateTime, List<string>> kvp in journal)
         {
-            Console.WriteLine(kvp.Key);
+            Console.WriteLine("Entry for " + kvp.Key);
             foreach (string value in kvp.Value) {
                 Console.WriteLine(value);
             }
         }
-
-        Console.WriteLine("Latest Entry:");
 
         // TODO: Find latest date and print out the according entries
 
@@ -124,9 +140,9 @@ class Program {
 
             DateTime parsedDate = DateTime.Parse(stringDate).Date;
 
-            List<string> entries = journal[parsedDate];
+            List<string> entriesForDate = journal[parsedDate];
 
-            foreach (string entry in entries) {
+            foreach (string entry in entriesForDate) {
                 Console.WriteLine(entry);
             }
             
