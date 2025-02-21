@@ -65,11 +65,23 @@ class Program {
         }
         if (addSelection == "Save and Exit") {
 
-            // TODO: SAVE DATE + LIST TO A FILE
+            string filePath = "gratitude-journal.txt";
 
-            Console.WriteLine("Your list:");
-            Console.WriteLine(items);
-            Console.WriteLine("Exiting now");
+            if (!File.Exists(filePath)) {
+                File.Create(filePath).Close();
+            }
+
+            // FILE FORMAT: Date||Item|Item|Item
+
+            string contents = date.ToString(new CultureInfo("en-us")) + "||";
+            contents += String.Join("|", items);
+
+            StreamWriter sw = new StreamWriter(filePath);
+            sw.WriteLine(contents);
+            sw.Close();
+
+            Console.WriteLine("Your entry: " + contents);
+            Console.WriteLine("Saved.");
         }
         
     }
@@ -84,7 +96,10 @@ class Program {
         // testing
         foreach (KeyValuePair<DateTime, List<string>> kvp in journal)
         {
-            Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+            Console.WriteLine(kvp.Key);
+            foreach (string value in kvp.Value) {
+                Console.WriteLine(value);
+            }
         }
 
         Console.WriteLine("Latest Entry:");
