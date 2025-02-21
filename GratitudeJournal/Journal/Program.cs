@@ -59,9 +59,7 @@ class Program {
 
             if (addSelection == "Get an Idea") {
 
-                // TODO: Generate random gratitude idea here
-
-                Console.WriteLine("Random Gratitude Idea");
+                Console.WriteLine("Random Gratitude Idea: " + getRandomIdea());
 
             }
         }
@@ -128,10 +126,6 @@ class Program {
 
      static void GetIdeas() {
 
-        // TODO: READ IN IDEAS FILE AS LIST OF STRINGS
-
-        List<string> ideas = new List<string> { "Idea 1", "Idea 2", "Idea 3", "Idea 4", "Idea 5" };
-
         var random = new Random();
 
         Console.WriteLine("Random Gratitude Idea:");
@@ -140,8 +134,7 @@ class Program {
 
         while (ideaSelection == "New Idea") {
 
-            int index = random.Next(ideas.Count);
-            Console.WriteLine(ideas[index]);
+            Console.WriteLine(getRandomIdea());
             
             ideaSelection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -150,5 +143,16 @@ class Program {
                 }));
         }
 
+    }
+
+    static string getRandomIdea() {
+        string filePath = "idea-database.txt";
+        string contents = File.ReadAllText(filePath);
+        string[] ideas = contents.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+
+        Random random = new Random();
+        int index = random.Next(0, ideas.Length);
+
+        return ideas[index];
     }
 }
