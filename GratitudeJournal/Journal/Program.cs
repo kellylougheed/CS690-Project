@@ -36,7 +36,9 @@ class Program {
     static void AddEntry() {
 
         DateTime date = DateTime.Today;
-        Console.WriteLine("Gratitude Entry for " + date.ToString(new CultureInfo("en-us")));
+        string strDate = date.ToString(new CultureInfo("en-us"));
+        string formattedDate = strDate.Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
+        Console.WriteLine("Gratitude Entry for " + formattedDate);
 
         string addSelection = "Add Another";
 
@@ -88,8 +90,6 @@ class Program {
 
      static void ViewEntries() {
 
-        // TODO: READ IN FILE AS DICTIONARY OF TYPE DATETIME:LIST OF STRINGS
-
         string filePath = "gratitude-journal.txt";
 
         Dictionary<DateTime, List<string>> journal = new Dictionary<DateTime, List<string>>();
@@ -111,10 +111,9 @@ class Program {
 
         }
         
-        // testing
-        foreach (KeyValuePair<DateTime, List<string>> kvp in journal)
-        {
-            Console.WriteLine("Entry for " + kvp.Key);
+        foreach (KeyValuePair<DateTime, List<string>> kvp in journal) {
+            string formattedDate = kvp.Key.ToString(new CultureInfo("en-us")).Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
+            Console.WriteLine("Entry for " + formattedDate);
             foreach (string value in kvp.Value) {
                 Console.WriteLine(value);
             }
