@@ -36,7 +36,9 @@ class Program {
     static void AddEntry() {
 
         DateTime date = DateTime.Today;
-        Console.WriteLine("Gratitude Entry for " + date.ToString(new CultureInfo("en-us")));
+        string strDate = date.ToString(new CultureInfo("en-us"));
+        string formattedDate = strDate.Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
+        Console.WriteLine("Gratitude Entry for " + formattedDate);
 
         string addSelection = "Add Another";
 
@@ -59,37 +61,63 @@ class Program {
 
             if (addSelection == "Get an Idea") {
 
-                // TODO: Generate random gratitude idea here
-
-                Console.WriteLine("Random Gratitude Idea");
+                Console.WriteLine("Random Gratitude Idea: " + getRandomIdea());
 
             }
         }
         if (addSelection == "Save and Exit") {
 
-            // TODO: SAVE DATE + LIST TO A FILE
+            string filePath = "gratitude-journal.txt";
 
-            Console.WriteLine("Your list:");
-            Console.WriteLine(items);
-            Console.WriteLine("Exiting now");
+            if (!File.Exists(filePath)) {
+                File.Create(filePath).Close();
+            }
+
+            // FILE FORMAT: Date||Item|Item|Item
+
+            string contents = date.ToString(new CultureInfo("en-us")) + "||";
+            contents += String.Join("|", items);
+
+            StreamWriter sw = new StreamWriter(filePath);
+            sw.WriteLine(contents);
+            sw.Close();
+
+            Console.WriteLine("Your entry: " + contents);
+            Console.WriteLine("Saved.");
         }
         
     }
 
      static void ViewEntries() {
 
-        // TODO: READ IN FILE AS DICTIONARY OF TYPE DATETIME:LIST OF STRINGS
+        string filePath = "gratitude-journal.txt";
 
         Dictionary<DateTime, List<string>> journal = new Dictionary<DateTime, List<string>>();
-        journal.Add(DateTime.Today.Date, new List<string> { "Thing 1", "Thing 2" });
-        
-        // testing
-        foreach (KeyValuePair<DateTime, List<string>> kvp in journal)
-        {
-            Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-        }
 
-        Console.WriteLine("Latest Entry:");
+        string contents = File.ReadAllText(filePath);
+        string[] entries = contents.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string entry in entries) {
+            string[] dateAndList = entry.Split("||", StringSplitOptions.RemoveEmptyEntries);
+
+            string dtString = dateAndList[0];
+
+            string[] listItems = dateAndList[1].Split("|", StringSplitOptions.RemoveEmptyEntries);
+
+            // Final date form
+            DateTime parsedDate = DateTime.Parse(dtString).Date;
+
+            journal.Add(parsedDate, listItems.ToList());
+
+        }
+        
+        foreach (KeyValuePair<DateTime, List<string>> kvp in journal) {
+            string formattedDate = kvp.Key.ToString(new CultureInfo("en-us")).Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
+            Console.WriteLine("Entry for " + formattedDate);
+            foreach (string value in kvp.Value) {
+                Console.WriteLine(value);
+            }
+        }
 
         // TODO: Find latest date and print out the according entries
 
@@ -111,9 +139,9 @@ class Program {
 
             DateTime parsedDate = DateTime.Parse(stringDate).Date;
 
-            List<string> entries = journal[parsedDate];
+            List<string> entriesForDate = journal[parsedDate];
 
-            foreach (string entry in entries) {
+            foreach (string entry in entriesForDate) {
                 Console.WriteLine(entry);
             }
             
@@ -128,10 +156,6 @@ class Program {
 
      static void GetIdeas() {
 
-        // TODO: READ IN IDEAS FILE AS LIST OF STRINGS
-
-        List<string> ideas = new List<string> { "Idea 1", "Idea 2", "Idea 3", "Idea 4", "Idea 5" };
-
         var random = new Random();
 
         Console.WriteLine("Random Gratitude Idea:");
@@ -140,8 +164,7 @@ class Program {
 
         while (ideaSelection == "New Idea") {
 
-            int index = random.Next(ideas.Count);
-            Console.WriteLine(ideas[index]);
+            Console.WriteLine(getRandomIdea());
             
             ideaSelection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -150,5 +173,16 @@ class Program {
                 }));
         }
 
+    }
+
+    static string getRandomIdea() {
+        string filePath = "idea-database.txt";
+        string contents = File.ReadAllText(filePath);
+        string[] ideas = contents.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+
+        Random random = new Random();
+        int index = random.Next(0, ideas.Length);
+
+        return ideas[index];
     }
 }
