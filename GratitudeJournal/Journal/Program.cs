@@ -79,7 +79,7 @@ class Program {
             contents += String.Join("|", items);
 
             StreamWriter sw = new StreamWriter(filePath, true);
-            sw.WriteLine("\n" + contents);
+            sw.WriteLine(contents);
             sw.Close();
 
             Console.WriteLine("Your entry for " + date.Date.ToString(new CultureInfo("en-us")).Split(" ", StringSplitOptions.RemoveEmptyEntries)[0]);
@@ -110,7 +110,11 @@ class Program {
             // Final date form
             DateTime parsedDate = DateTime.Parse(dtString).Date;
 
-            journal.Add(parsedDate, listItems.ToList());
+            if (journal.ContainsKey(parsedDate)) {
+                journal[parsedDate].AddRange(listItems);
+            } else {
+                journal.Add(parsedDate, listItems.ToList());
+            } 
 
         }
         
