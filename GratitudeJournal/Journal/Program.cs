@@ -8,7 +8,7 @@ using System.Globalization;
 class Program {
     static void Main(string[] args) {
 
-        Console.WriteLine("Welcome to your Gratitude Journal!");
+        Console.WriteLine("\nWelcome to your Gratitude Journal!");
 
         var selection = "";
 
@@ -38,7 +38,7 @@ class Program {
         DateTime date = DateTime.Today;
         string strDate = date.ToString(new CultureInfo("en-us"));
         string formattedDate = strDate.Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
-        Console.WriteLine("Gratitude Entry for " + formattedDate);
+        Console.WriteLine("\n✨ Gratitude Entry for " + formattedDate);
 
         string addSelection = "Add Another";
 
@@ -61,7 +61,7 @@ class Program {
 
             if (addSelection == "Get an Idea") {
 
-                Console.WriteLine("Random Gratitude Idea: " + getRandomIdea());
+                Console.WriteLine("💡 Random Gratitude Idea: " + getRandomIdea());
 
             }
         }
@@ -109,11 +109,11 @@ class Program {
             sw.WriteLine(contents);
             sw.Close();
 
-            Console.WriteLine("Your entry for " + date.Date.ToString(new CultureInfo("en-us")).Split(" ", StringSplitOptions.RemoveEmptyEntries)[0]);
+            Console.WriteLine("\n✨ Gratitude Entry for " + date.Date.ToString(new CultureInfo("en-us")).Split(" ", StringSplitOptions.RemoveEmptyEntries)[0] + ":");
             foreach (string item in items) {
                 Console.WriteLine(item);
             }
-            Console.WriteLine("Saved.");
+            Console.WriteLine("✅ Saved.\n");
         }
         
     }
@@ -147,10 +147,11 @@ class Program {
         
         foreach (KeyValuePair<DateTime, List<string>> kvp in journal) {
             string formattedDate = kvp.Key.ToString(new CultureInfo("en-us")).Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
-            Console.WriteLine("Entry for " + formattedDate);
+            Console.WriteLine("✨ Gratitude Entry for " + formattedDate);
             foreach (string value in kvp.Value) {
                 Console.WriteLine(value);
             }
+            Console.WriteLine("");
         }
 
         // TODO: Find latest date and print out the according entries?
@@ -179,12 +180,17 @@ class Program {
                 List<string> entriesForDate;
 
                 if (journal.ContainsKey(parsedDate)) {
+                    string strDate = parsedDate.ToString(new CultureInfo("en-us"));
+                    string formattedDate = strDate.Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
+                    Console.WriteLine("\n✨ Gratitude Entry for " + formattedDate);
+
                     entriesForDate = journal[parsedDate];
                     foreach (string entry in entriesForDate) {
                         Console.WriteLine(entry);
                     }
+                    Console.WriteLine("");
                 } else {
-                    Console.WriteLine("Sorry, no entries for that date.");
+                    Console.WriteLine("Sorry, no entries for that date.\n");
                 }
             }
 
@@ -201,7 +207,7 @@ class Program {
 
         var random = new Random();
 
-        Console.WriteLine("Random Gratitude Idea:");
+        Console.WriteLine("\n💡 Random Gratitude Idea");
 
         string ideaSelection = "New Idea";
 
