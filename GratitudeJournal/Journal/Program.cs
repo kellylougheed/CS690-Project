@@ -75,14 +75,17 @@ class Program {
 
             // FILE FORMAT: Date||Item|Item|Item
 
-            string contents = date.ToString(new CultureInfo("en-us")) + "||";
+            string contents = date.Date.ToString(new CultureInfo("en-us")) + "||";
             contents += String.Join("|", items);
 
             StreamWriter sw = new StreamWriter(filePath);
             sw.WriteLine(contents);
             sw.Close();
 
-            Console.WriteLine("Your entry: " + contents);
+            Console.WriteLine("Your entry for " + date.Date.ToString(new CultureInfo("en-us")).Split(" ", StringSplitOptions.RemoveEmptyEntries)[0]);
+            foreach (string item in items) {
+                Console.WriteLine(item);
+            }
             Console.WriteLine("Saved.");
         }
         
