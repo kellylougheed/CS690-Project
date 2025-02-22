@@ -67,6 +67,33 @@ class Program {
         }
         if (addSelection == "Save and Exit") {
 
+            // Verify date
+            string dateSelection = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .AddChoices(new[] {
+                        "Use Today's Date", "Enter Another Date"
+                    }));
+
+            if (dateSelection == "Enter Another Date") {
+
+                bool isValid = false;
+
+                // https://www.bytehide.com/blog/string-to-datetime-csharp
+
+                while (!isValid) {
+                    Console.Write("Enter a date in mm/dd/yyyy format: ");
+                    string stringDate = Console.ReadLine();
+
+                    isValid = DateTime.TryParse(stringDate, out date);
+
+                    if (!isValid) {
+                        Console.WriteLine("Invalid date. Try again.");
+                    }
+                }
+                
+            }
+
+
             string filePath = "gratitude-journal.txt";
 
             if (!File.Exists(filePath)) {
@@ -126,7 +153,7 @@ class Program {
             }
         }
 
-        // TODO: Find latest date and print out the according entries
+        // TODO: Find latest date and print out the according entries?
 
         var viewSelection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
