@@ -78,8 +78,8 @@ class Program {
             string contents = date.Date.ToString(new CultureInfo("en-us")) + "||";
             contents += String.Join("|", items);
 
-            StreamWriter sw = new StreamWriter(filePath);
-            sw.WriteLine(contents);
+            StreamWriter sw = new StreamWriter(filePath, true);
+            sw.WriteLine("\n" + contents);
             sw.Close();
 
             Console.WriteLine("Your entry for " + date.Date.ToString(new CultureInfo("en-us")).Split(" ", StringSplitOptions.RemoveEmptyEntries)[0]);
@@ -134,20 +134,29 @@ class Program {
 
             // https://www.bytehide.com/blog/string-to-datetime-csharp
 
-            Console.Write("Enter a date in MM/dd/yyyy format: ");
-
-            // TODO: Validate user input
-
+            Console.Write("Enter a date in mm/dd/yyyy format: ");
             string stringDate = Console.ReadLine();
 
-            DateTime parsedDate = DateTime.Parse(stringDate).Date;
+            DateTime parsedDate;
+            bool isValid = DateTime.TryParse(stringDate, out parsedDate);
 
-            List<string> entriesForDate = journal[parsedDate];
+            if (!isValid) {
+                Console.WriteLine("Invalid date. Try again.");
+            } else {
+                parsedDate = parsedDate.Date;
 
-            foreach (string entry in entriesForDate) {
-                Console.WriteLine(entry);
+                List<string> entriesForDate;
+
+                if (journal.ContainsKey(parsedDate)) {
+                    entriesForDate = journal[parsedDate];
+                    foreach (string entry in entriesForDate) {
+                        Console.WriteLine(entry);
+                    }
+                } else {
+                    Console.WriteLine("Sorry, no entries for that date.");
+                }
             }
-            
+
             viewSelection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .AddChoices(new[] {
