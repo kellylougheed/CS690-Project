@@ -6,6 +6,7 @@ using System;
 using System.Globalization;
 
 class Program {
+    
     static void Main(string[] args) {
 
         Console.WriteLine("\nWelcome to your Gratitude Journal!");
@@ -34,6 +35,8 @@ class Program {
     }
 
     static void AddEntry() {
+        
+        IdeaGenerator ig = new IdeaGenerator("idea-database.txt");
 
         DateTime date = DateTime.Today;
         string strDate = date.ToString(new CultureInfo("en-us"));
@@ -61,7 +64,7 @@ class Program {
 
             if (addSelection == "Get an Idea") {
 
-                Console.WriteLine("💡 Random Gratitude Idea: " + getRandomIdea());
+                Console.WriteLine("💡 Random Gratitude Idea: " + ig.getRandomIdea());
 
             }
         }
@@ -205,7 +208,7 @@ class Program {
 
      static void GetIdeas() {
 
-        var random = new Random();
+        IdeaGenerator ig = new IdeaGenerator("idea-database.txt");
 
         Console.WriteLine("\n💡 Random Gratitude Idea");
 
@@ -213,7 +216,7 @@ class Program {
 
         while (ideaSelection == "New Idea") {
 
-            Console.WriteLine(getRandomIdea());
+            Console.WriteLine(ig.getRandomIdea());
             
             ideaSelection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -222,16 +225,5 @@ class Program {
                 }));
         }
 
-    }
-
-    static string getRandomIdea() {
-        string filePath = "idea-database.txt";
-        string contents = File.ReadAllText(filePath);
-        string[] ideas = contents.Split("\n", StringSplitOptions.RemoveEmptyEntries);
-
-        Random random = new Random();
-        int index = random.Next(0, ideas.Length);
-
-        return ideas[index];
     }
 }
