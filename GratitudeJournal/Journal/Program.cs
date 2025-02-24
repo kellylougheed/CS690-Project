@@ -6,6 +6,7 @@ using System;
 using System.Globalization;
 
 class Program {
+    
     static void Main(string[] args) {
 
         Console.WriteLine("\nWelcome to your Gratitude Journal!");
@@ -34,6 +35,8 @@ class Program {
     }
 
     static void AddEntry() {
+        
+        IdeaGenerator ig = new IdeaGenerator("idea-database.txt");
 
         DateTime date = DateTime.Today;
         string strDate = date.ToString(new CultureInfo("en-us"));
@@ -61,7 +64,7 @@ class Program {
 
             if (addSelection == "Get an Idea") {
 
-                Console.WriteLine("💡 Random Gratitude Idea: " + getRandomIdea());
+                Console.WriteLine("💡 Random Gratitude Idea: " + ig.getRandomIdea());
 
             }
         }
@@ -120,41 +123,8 @@ class Program {
 
      static void ViewEntries() {
 
-        string filePath = "gratitude-journal.txt";
-
-        Dictionary<DateTime, List<string>> journal = new Dictionary<DateTime, List<string>>();
-
-        string contents = File.ReadAllText(filePath);
-        string[] entries = contents.Split("\n", StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (string entry in entries) {
-            string[] dateAndList = entry.Split("||", StringSplitOptions.RemoveEmptyEntries);
-
-            string dtString = dateAndList[0];
-
-            string[] listItems = dateAndList[1].Split("|", StringSplitOptions.RemoveEmptyEntries);
-
-            // Final date form
-            DateTime parsedDate = DateTime.Parse(dtString).Date;
-
-            if (journal.ContainsKey(parsedDate)) {
-                journal[parsedDate].AddRange(listItems);
-            } else {
-                journal.Add(parsedDate, listItems.ToList());
-            } 
-
-        }
-        
-        foreach (KeyValuePair<DateTime, List<string>> kvp in journal) {
-            string formattedDate = kvp.Key.ToString(new CultureInfo("en-us")).Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
-            Console.WriteLine("✨ Gratitude Entry for " + formattedDate);
-            foreach (string value in kvp.Value) {
-                Console.WriteLine(value);
-            }
-            Console.WriteLine("");
-        }
-
-        // TODO: Find latest date and print out the according entries?
+        GJournal myJournal = new GJournal("gratitude-journal.txt");
+        myJournal.displayEntries();
 
         var viewSelection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -177,18 +147,8 @@ class Program {
             } else {
                 parsedDate = parsedDate.Date;
 
-                List<string> entriesForDate;
-
-                if (journal.ContainsKey(parsedDate)) {
-                    string strDate = parsedDate.ToString(new CultureInfo("en-us"));
-                    string formattedDate = strDate.Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
-                    Console.WriteLine("\n✨ Gratitude Entry for " + formattedDate);
-
-                    entriesForDate = journal[parsedDate];
-                    foreach (string entry in entriesForDate) {
-                        Console.WriteLine(entry);
-                    }
-                    Console.WriteLine("");
+                if (myJournal.containsEntryForDate(parsedDate)) {
+                    myJournal.displayEntriesForDate(parsedDate);
                 } else {
                     Console.WriteLine("Sorry, no entries for that date.\n");
                 }
@@ -205,7 +165,7 @@ class Program {
 
      static void GetIdeas() {
 
-        var random = new Random();
+        IdeaGenerator ig = new IdeaGenerator("idea-database.txt");
 
         Console.WriteLine("\n💡 Random Gratitude Idea");
 
@@ -213,7 +173,7 @@ class Program {
 
         while (ideaSelection == "New Idea") {
 
-            Console.WriteLine(getRandomIdea());
+            Console.WriteLine(ig.getRandomIdea());
             
             ideaSelection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -222,16 +182,5 @@ class Program {
                 }));
         }
 
-    }
-
-    static string getRandomIdea() {
-        string filePath = "idea-database.txt";
-        string contents = File.ReadAllText(filePath);
-        string[] ideas = contents.Split("\n", StringSplitOptions.RemoveEmptyEntries);
-
-        Random random = new Random();
-        int index = random.Next(0, ideas.Length);
-
-        return ideas[index];
     }
 }
