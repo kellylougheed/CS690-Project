@@ -55,7 +55,7 @@ class GJournal {
                 }
             }
         }
-        return new Entry(DateTime.Today, new List<string>());
+        return new Entry(dateToSearch, new List<string>{"No entry found"});
     }
 
     public void displayEntries() {
