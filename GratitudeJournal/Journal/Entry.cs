@@ -2,7 +2,7 @@ namespace Journal;
 
 using System.Globalization;
 
-class Entry {
+public class Entry {
     public DateTime date { get; }
     public List<string> items { get; }
 
