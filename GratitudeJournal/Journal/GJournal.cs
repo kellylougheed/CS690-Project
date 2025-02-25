@@ -2,7 +2,7 @@ namespace Journal;
 
 using System.Globalization;
 
-class GJournal {
+public class GJournal {
     public string filePath { get; }
     public List<Entry> entries { get; set; }
 
@@ -46,7 +46,7 @@ class GJournal {
 
     public void update(DateTime date, List<string> items) {
         addInputToFile(date, items);
-        addInputToEntries(date, items);
+        convertFileToEntries();
     }
 
     // FILE FORMAT: Date||Item|Item|Item
@@ -95,12 +95,14 @@ class GJournal {
         }
     }
 
-    public void displayEntriesForDate(DateTime dateToDisplay) {
+    public bool displayEntriesForDate(DateTime dateToDisplay) {
         if (containsEntryForDate(dateToDisplay)) {
             Entry e = getEntryForDate(dateToDisplay);
             Console.WriteLine(e);
+            return true;
         } else {
             Console.WriteLine("Sorry, no entries to display.");
+            return false;
         }
     }
 
