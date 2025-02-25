@@ -1,8 +1,10 @@
 namespace Journal;
 
+using System.Globalization;
+
 class GJournal {
     public string filePath { get; }
-    public List<Entry> entries { get; }
+    public List<Entry> entries { get; set; }
 
     public GJournal(string filePath) {
         this.filePath = filePath;
@@ -16,8 +18,12 @@ class GJournal {
         convertFileToEntries();
     }
 
-    private void convertFileToEntries() {
-        string contents = File.ReadAllText(filePath);
+    public void convertFileToEntries() {
+
+        // reset entries
+        entries = new List<Entry>();
+
+        string contents = File.ReadAllText(filePath); // closes file
         string[] rawEntries = contents.Split("\n", StringSplitOptions.RemoveEmptyEntries);
 
         foreach (string entry in rawEntries) {
@@ -35,6 +41,31 @@ class GJournal {
             } else {
                 getEntryForDate(parsedDate).items.AddRange(listItems);
             }
+        }
+    }
+
+    public void update(DateTime date, List<string> items) {
+        addInputToFile(date, items);
+        addInputToEntries(date, items);
+    }
+
+    // FILE FORMAT: Date||Item|Item|Item
+    public void addInputToFile(DateTime date, List<string> items) {
+        string contents = date.Date.ToString(new CultureInfo("en-us")) + "||";
+        contents += String.Join("|", items);
+
+        StreamWriter sw = new StreamWriter(filePath, true);
+        sw.WriteLine(contents);
+        sw.Close();
+    }
+
+    public void addInputToEntries(DateTime date, List<string> items) {
+        entries.Add(new Entry(date, items));
+    }
+
+    public void printEntry(DateTime date) {
+        if (containsEntryForDate(date)) {
+            Console.WriteLine(getEntryForDate(date));
         }
     }
 
